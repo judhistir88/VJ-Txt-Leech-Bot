@@ -193,7 +193,7 @@ async def upload(bot: Client, m: Message):
                         time.sleep(e.x)
                         continue
                 else:
-                    Show = f"**⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️**\n\n**📝Name -** `{name}\nQuality - {raw_text2}`\n\n**🔗URL - ** `{url}`"
+                    Show = f"**⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️**\n\n**📝Name ➡️ ** `{name}\n\nQuality ➡️ {raw_text2}`\n\n**🔗URL ➡️ ** `{url}`"
                     prog = await m.reply_text(Show)
                     res_file = await helper.download_video(url, cmd, name)
                     filename = res_file
@@ -204,7 +204,7 @@ async def upload(bot: Client, m: Message):
 
             except Exception as e:
                 await m.reply_text(
-                    f"**downloading Interupted **\n{str(e)}\n**Name** » {name}\n**Link** - `{url}`"
+                    f"**Downloading ⬇️ Interupted 😶**\n\n{str(e)}\n\n**Name** ➡️ {name}\n\n**Link** ➡️ `{url}`"
                 )
                 continue
 
