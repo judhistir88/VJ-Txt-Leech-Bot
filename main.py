@@ -80,12 +80,12 @@ async def upload(bot: Client, m: Message):
 
     # Inline buttons for resolution selection
     await editable.edit("**Send Resolution 📸**\n\nPlease choose quality:", reply_markup=InlineKeyboardMarkup([
-        [InlineKeyboardButton("144", callback_data="144")],
-        [InlineKeyboardButton("240", callback_data="240")],
-        [InlineKeyboardButton("360", callback_data="360")],
-        [InlineKeyboardButton("480", callback_data="480")],
-        [InlineKeyboardButton("720", callback_data="720")],
-        [InlineKeyboardButton("1080", callback_data="1080")]
+        [InlineKeyboardButton("144p", callback_data="144")],
+        [InlineKeyboardButton("240p", callback_data="240")],
+        [InlineKeyboardButton("360p", callback_data="360")],
+        [InlineKeyboardButton("480p", callback_data="480")],
+        [InlineKeyboardButton("720p", callback_data="720")],
+        [InlineKeyboardButton("1080p", callback_data="1080")]
     ]))
 
     @bot.on_callback_query()
