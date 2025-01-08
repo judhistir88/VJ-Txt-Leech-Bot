@@ -45,13 +45,13 @@ def home():
         }
 
         .highlight {
-            color: #00bfff; /* Changed circle color to blue */
+            color: #00bfff;
             position: relative;
             z-index: 1;
         }
 
         .dot {
-            color: #00bfff; /* Match circle color */
+            color: #00bfff;
         }
 
         .hashtag {
@@ -62,21 +62,19 @@ def home():
         }
 
         .trend {
-            color: #00bfff; /* Match circle color */
+            color: #00bfff;
         }
 
-        /* Blue Circle */
         .circle {
             position: absolute;
             width: 50%;
             height: 50%;
-            background: #00bfff; /* Changed circle color */
+            background: #00bfff;
             border-radius: 50%;
             top: 10%;
             left: -10%;
             z-index: 0;
         }
-
     </style>
 
     <div class="circle"></div>
