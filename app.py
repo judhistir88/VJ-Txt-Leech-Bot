@@ -15,7 +15,7 @@ def home():
         <canvas id="copilot-canvas"></canvas>
         <div class="hero-content">
             <h2>All Set 👍✅!</h2>
-            <p>✅✅✅✅✅🟨🟧🟧🟧🟧.</p>
+            <p>✅✅✅✅✅🟨🟧🟧🟧🟧</p>
         </div>
     </div>
     </center>
@@ -30,6 +30,7 @@ def home():
             margin: 0;
             font-family: 'Arial', sans-serif;
             color: white;
+            overflow: hidden;
         }
         .header {
             text-align: center;
@@ -52,12 +53,17 @@ def home():
             width: 100%;
             max-width: 800px;
             margin-top: 50px;
+            z-index: 10;
         }
         #copilot-canvas {
             width: 100%;
             height: 300px;
             background: radial-gradient(circle, #3b3b98, #1e1e50);
             border-radius: 15px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
         }
         .hero-content {
             position: absolute;
@@ -66,6 +72,8 @@ def home():
             transform: translate(-50%, -50%);
             text-align: center;
             color: white;
+            z-index: 2;
+            animation: fadeInUp 2s ease-out;
         }
         .hero-content h2 {
             font-size: 2.5em;
@@ -98,6 +106,26 @@ def home():
         @keyframes fadeInUp {
             0% { transform: translateY(50px); opacity: 0; }
             100% { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Double Exposure Effect */
+        .double-exposure {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://source.unsplash.com/featured/?nature');
+            background-size: cover;
+            opacity: 0.3;
+            pointer-events: none;
+            animation: doubleExposure 15s ease-in-out infinite;
+        }
+
+        @keyframes doubleExposure {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+            100% { opacity: 0.3; }
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r148/three.min.js"></script>
@@ -145,6 +173,9 @@ def home():
 
         animate();
     </script>
+
+    <div class="double-exposure"></div>
+
     <footer>
         <p>Made with 💕 in India | <a href="#">Visit us</a></p>
     </footer>
