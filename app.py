@@ -18,6 +18,7 @@ def home():
         body {
             background-color: #000;
             margin: 0;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -33,6 +34,7 @@ def home():
 
         .text-container {
             position: relative;
+            z-index: 10;
         }
 
         h1 {
@@ -65,21 +67,93 @@ def home():
             color: #00bfff;
         }
 
-        .circle {
+        /* Bubbles Background */
+        .bubbles {
             position: absolute;
-            width: 50%;
-            height: 50%;
-            background: #00bfff;
-            border-radius: 50%;
-            top: 10%;
-            left: -10%;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            top: 0;
+            left: 0;
             z-index: 0;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: float 10s infinite ease-in-out;
+        }
+
+        .bubble:nth-child(1) {
+            left: 10%;
+            width: 40px;
+            height: 40px;
+            animation-duration: 12s;
+            animation-delay: 0s;
+        }
+
+        .bubble:nth-child(2) {
+            left: 30%;
+            width: 25px;
+            height: 25px;
+            animation-duration: 8s;
+            animation-delay: 2s;
+        }
+
+        .bubble:nth-child(3) {
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            animation-duration: 10s;
+            animation-delay: 4s;
+        }
+
+        .bubble:nth-child(4) {
+            left: 70%;
+            width: 20px;
+            height: 20px;
+            animation-duration: 14s;
+            animation-delay: 6s;
+        }
+
+        .bubble:nth-child(5) {
+            left: 90%;
+            width: 35px;
+            height: 35px;
+            animation-duration: 16s;
+            animation-delay: 8s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-50vh) scale(1.2);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1.5);
+                opacity: 0;
+            }
         }
     </style>
 
-    <div class="circle"></div>
+    <div class="bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
     """
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
+
