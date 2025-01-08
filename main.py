@@ -74,12 +74,14 @@ async def upload(bot: Client, m: Message):
     raw_text = input0.text
     await input0.delete(True)
 
-    await editable.edit("**Now Please Send Me Your Batch Name\nIf you don't want to add send a (.) or (|) or any symbol or emoji of your choice**")
-    input1: Message = await bot.listen(editable.chat.id)
-    raw_text0 = input1.text
+    # Prompt the user to send their batch name, with the option to skip
+    await editable.edit("**Now Please Send Me Your Batch Name\nIf you don't want to add, send `Skip` or any symbol/emoji of your choice**")
+    input1: Message = await bot.listen(editable.chat.id) # Wait for the user's input
+    raw_text0 = input1.text.strip() # Get the user's input
+    if raw_text0.lower() in ["skip"]: # If the user sends 'Skip', '.', or '|', treat it as an empty string
+        raw_text0 = ""  # Set it as an empty string if they chose to skip
     await input1.delete(True)
     
-
     await editable.edit("**Send Resolution 📸**\n\n144\n240\n360\n480\n720\n1080 \n\nplease choose quality")
     input2: Message = await bot.listen(editable.chat.id)
     raw_text2 = input2.text
@@ -103,18 +105,21 @@ async def upload(bot: Client, m: Message):
             res = "UN"
     
     
+    # Prompt the user to enter a caption (optional)
+    await editable.edit("Now Enter A Caption to add caption on your uploaded file\nIf you don't want to add a caption, send `Skip` or any symbol/emoji of your choice")
+    input3: Message = await bot.listen(editable.chat.id) # Wait for the user's input
+    raw_text3 = input3.text.strip() # Get the user's input
+    if raw_text3.lower() in ["skip"]:
+        raw_text3 = ""  # Set it as an empty string if they chose to skip
 
-    await editable.edit("Now Enter A Caption to add caption on your uploaded file")
-    input3: Message = await bot.listen(editable.chat.id)
-    raw_text3 = input3.text
-    await input3.delete(True)
-    highlighter  = f"️ ⁪⁬⁮⁮⁮"
+    highlighter = f"️ ⁪⁬⁮⁮⁮" # Define the highlighter and use the caption if provided
     if raw_text3 == 'Robin':
         MR = highlighter 
     else:
         MR = raw_text3
+    await input3.delete(True)
    
-    await editable.edit("Now send the direct download Thumb url\nTo know about Thumb url hit /start\n Or if you don't want thumbnail 🖼️ send = No")
+    await editable.edit("Now send the direct download Thumb url\nTo know about Thumb url hit /start\n Or if you don't want thumbnail 🖼️ Send = No")
     input6 = message = await bot.listen(editable.chat.id)
     raw_text6 = input6.text
     await input6.delete(True)
@@ -204,7 +209,7 @@ async def upload(bot: Client, m: Message):
 
             except Exception as e:
                 await m.reply_text(
-                    f"**Downloading ⬇️ Interupted 😶**\n\n{str(e)}\n\n**Name** ➡️ {name}\n\n**Link** ➡️ `{url}`"
+                    f"**Downloading ⬇️ Interupted 😶**\n\n{str(e)} \n\n**Name** ➡️ {name}\n\n**Link** ➡️ `{url}`"
                 )
                 continue
 
