@@ -91,53 +91,33 @@ def home():
             100% { transform: translateY(0); opacity: 1; }
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r148/three.min.js"></script>
     <script>
-        // Initialize canvas animation for the Copilot hero
+        // GitHub Copilot Animated Avatar using Three.js
+
         const canvas = document.getElementById('copilot-canvas');
-        const ctx = canvas.getContext('2d');
-        const particles = [];
-        const particleCount = 100;
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas });
+        renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 
-        canvas.width = canvas.clientWidth;
-        canvas.height = canvas.clientHeight;
+        // Add a basic sphere to represent the avatar
+        const geometry = new THREE.SphereGeometry(1, 32, 32);
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const sphere = new THREE.Mesh(geometry, material);
+        scene.add(sphere);
 
-        // Particle Class
-        class Particle {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.vx = (Math.random() - 0.5) * 2;
-                this.vy = (Math.random() - 0.5) * 2;
-                this.radius = Math.random() * 3 + 1;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-                ctx.fill();
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-
-                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-            }
-        }
-
-        // Create particles
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
-        }
+        camera.position.z = 5;
 
         // Animation loop
         function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
             requestAnimationFrame(animate);
+
+            // Rotate the sphere to simulate movement
+            sphere.rotation.x += 0.01;
+            sphere.rotation.y += 0.01;
+
+            renderer.render(scene, camera);
         }
 
         animate();
