@@ -8,20 +8,19 @@ def home():
     return """
     <center>
     <div class="header">
-        <h1>GitHub Copilot Avatar</h1>
-        <p class="subheading">Experience a 3D animated avatar using Three.js</p>
+        <h1>Bot Is Running</h1>
+        <p class="subheading">All Set 👍✅</p>
     </div>
-    <div class="copilot-hero">
-        <canvas id="copilot-canvas"></canvas>
+    <div class="art-container">
         <div class="hero-content">
-            <h2>All Set 👍✅!</h2>
-            <p>✅✅✅✅✅🟨🟧🟧🟧🟧</p>
+            <h2>✅✅✅✅✅🟨🟧🟧🟧🟧</h2>
+            <p>Explore unique animations and designs.</p>
         </div>
     </div>
     </center>
     <style>
         body {
-            background: linear-gradient(to bottom, #6a11cb, #2575fc);
+            background: linear-gradient(to bottom, #ff6a00, #ee0979);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -31,16 +30,20 @@ def home():
             font-family: 'Arial', sans-serif;
             color: white;
             overflow: hidden;
+            position: relative;
         }
+
         .header {
             text-align: center;
-            animation: fadeIn 3s ease-out;
+            animation: fadeIn 2s ease-out;
         }
+
         h1 {
             font-size: 4em;
             font-weight: bold;
             animation: slideIn 2s ease-out;
         }
+
         .subheading {
             font-size: 1.5em;
             margin-top: 10px;
@@ -48,23 +51,15 @@ def home():
             color: #ffeb3b;
             animation: fadeInUp 2s ease-out;
         }
-        .copilot-hero {
+
+        .art-container {
             position: relative;
             width: 100%;
-            max-width: 800px;
+            height: 60%;
             margin-top: 50px;
             z-index: 10;
         }
-        #copilot-canvas {
-            width: 100%;
-            height: 300px;
-            background: radial-gradient(circle, #3b3b98, #1e1e50);
-            border-radius: 15px;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
+
         .hero-content {
             position: absolute;
             top: 50%;
@@ -75,24 +70,33 @@ def home():
             z-index: 2;
             animation: fadeInUp 2s ease-out;
         }
+
         .hero-content h2 {
             font-size: 2.5em;
             margin: 0;
         }
+
         .hero-content p {
             font-size: 1.2em;
             margin-top: 10px;
         }
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            font-size: 1.2em;
-        }
-        footer a {
-            color: #ffeb3b;
-            text-decoration: none;
+
+        /* Double Exposure Effect */
+        .double-exposure {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://source.unsplash.com/featured/?nature,landscape');
+            background-size: cover;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 1;
+            animation: doubleExposure 15s ease-in-out infinite;
         }
 
+        /* Keyframes for Animation */
         @keyframes fadeIn {
             0% { opacity: 0; }
             100% { opacity: 1; }
@@ -108,73 +112,50 @@ def home():
             100% { transform: translateY(0); opacity: 1; }
         }
 
-        /* Double Exposure Effect */
-        .double-exposure {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('https://source.unsplash.com/featured/?nature');
-            background-size: cover;
-            opacity: 0.3;
-            pointer-events: none;
-            animation: doubleExposure 15s ease-in-out infinite;
-        }
-
         @keyframes doubleExposure {
             0% { opacity: 0.3; }
             50% { opacity: 0.6; }
             100% { opacity: 0.3; }
         }
+
+        /* Particle Animation */
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: particleMovement 4s infinite ease-in-out;
+        }
+
+        @keyframes particleMovement {
+            0% { transform: translate(0, 0); opacity: 1; }
+            50% { transform: translate(200px, 200px); opacity: 0.5; }
+            100% { transform: translate(0, 0); opacity: 1; }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 1.2em;
+        }
+
+        footer a {
+            color: #ffeb3b;
+            text-decoration: none;
+        }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r148/three.min.js"></script>
-    <script>
-        // GitHub Copilot Animated Avatar using Three.js
-
-        const canvas = document.getElementById('copilot-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: canvas });
-        renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-
-        // Add a basic sphere to represent the avatar
-        const geometry = new THREE.SphereGeometry(1, 32, 32);
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        const sphere = new THREE.Mesh(geometry, material);
-        scene.add(sphere);
-
-        camera.position.z = 5;
-
-        // Function to resize the canvas and camera
-        function onResize() {
-            const width = canvas.clientWidth;
-            const height = canvas.clientHeight;
-            canvas.width = width;
-            canvas.height = height;
-            renderer.setSize(width, height);
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-        }
-
-        // Update size when the window is resized
-        window.addEventListener('resize', onResize);
-
-        // Animation loop
-        function animate() {
-            requestAnimationFrame(animate);
-
-            // Rotate the sphere to simulate movement
-            sphere.rotation.x += 0.01;
-            sphere.rotation.y += 0.01;
-
-            renderer.render(scene, camera);
-        }
-
-        animate();
-    </script>
 
     <div class="double-exposure"></div>
+
+    <!-- Particle generation -->
+    <div class="particles-container">
+        <div class="particle" style="top: 10%; left: 15%; animation-delay: 0s;"></div>
+        <div class="particle" style="top: 20%; left: 30%; animation-delay: 1s;"></div>
+        <div class="particle" style="top: 30%; left: 45%; animation-delay: 2s;"></div>
+        <div class="particle" style="top: 40%; left: 60%; animation-delay: 3s;"></div>
+        <div class="particle" style="top: 50%; left: 70%; animation-delay: 4s;"></div>
+    </div>
 
     <footer>
         <p>Made with 💕 in India | <a href="#">Visit us</a></p>
