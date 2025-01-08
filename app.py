@@ -11,6 +11,13 @@ def home():
             <h1>All Set 👍✅!</h1>
             <p class="subheading">Made with 💕 in India</p>
         </div>
+        <div class="copilot-hero">
+            <canvas id="copilot-canvas"></canvas>
+            <div class="hero-content">
+                <h2>GitHub Copilot</h2>
+                <p>Your AI pair programmer, always ready to help.</p>
+            </div>
+        </div>
     </center>
     <style>
         body {
@@ -40,22 +47,33 @@ def home():
             color: #ffeb3b;
             animation: fadeInUp 2s ease-out;
         }
-        footer {
-            text-align: center;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            font-size: 1.3em;
-            position: absolute;
+        .copilot-hero {
+            position: relative;
             width: 100%;
-            bottom: 0;
+            max-width: 800px;
+            margin-top: 50px;
         }
-        footer a {
-            color: #ffeb3b;
-            text-decoration: none;
+        #copilot-canvas {
+            width: 100%;
+            height: 300px;
+            background: radial-gradient(circle, #3b3b98, #1e1e50);
+            border-radius: 15px;
         }
-        footer a:hover {
-            text-decoration: underline;
+        .hero-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+        }
+        .hero-content h2 {
+            font-size: 2.5em;
+            margin: 0;
+        }
+        .hero-content p {
+            font-size: 1.2em;
+            margin-top: 10px;
         }
 
         @keyframes fadeIn {
@@ -73,6 +91,57 @@ def home():
             100% { transform: translateY(0); opacity: 1; }
         }
     </style>
+    <script>
+        // Initialize canvas animation for the Copilot hero
+        const canvas = document.getElementById('copilot-canvas');
+        const ctx = canvas.getContext('2d');
+        const particles = [];
+        const particleCount = 100;
+
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+
+        // Particle Class
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.radius = Math.random() * 3 + 1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.fill();
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+        }
+
+        // Create particles
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
+        }
+
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
     <footer>
         <p>Made with 💕 in India | <a href="#">Visit us</a></p>
     </footer>
