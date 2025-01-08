@@ -2,6 +2,10 @@
 # Subscribe YouTube Channel For Amazing Bot https://youtube.com/@Tech_VJ
 # Ask Doubt on telegram @KingVJ01
 
+# Don't Remove Credit Tg - @VJ_Botz
+# Subscribe YouTube Channel For Amazing Bot https://youtube.com/@Tech_VJ
+# Ask Doubt on telegram @KingVJ01
+
 import os
 import re
 import sys
@@ -154,7 +158,7 @@ async def proceed_to_thumbnail(chat_id):
     else:
         thumb == "No"
 
-     if len(links) == 1:
+    if len(links) == 1:
         count = 1
     else:
         count = int(raw_text)
@@ -230,11 +234,8 @@ async def proceed_to_thumbnail(chat_id):
                     time.sleep(1)
 
             except Exception as e:
-                await m.reply_text(
-                    f"**downloading ⬇️ Interupted ⛓️‍💥 **\n{str(e)}\n**Name** ➡️ {name}\n**Link** ➡️ `{url}`"
-                )
+                await m.reply_text(str(e))
                 continue
-
-    except Exception as e:
-        await m.reply_text(e)
-    await m.reply_text("**All Set 😁👍✅**")
+        except Exception as e:
+            await m.reply_text(str(e))
+            continue
