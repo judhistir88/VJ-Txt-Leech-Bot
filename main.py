@@ -101,10 +101,14 @@ async def upload(bot: Client, m: Message):
             res = "UN"
 
         try:
-            await callback_query.message.edit(f"Resolution set to: {res}")
+            msg = await callback_query.message.edit(f"Resolution set to: {res}")
+            await asyncio.sleep(3)
+            await msg.delete()
             await proceed_to_caption(callback_query.message.chat.id, links, raw_text, raw_text0)
         except MessageIdInvalid:
-            await callback_query.message.reply(f"Resolution set to: {res}")
+            msg = await callback_query.message.reply(f"Resolution set to: {res}")
+            await asyncio.sleep(3)
+            await msg.delete()
             await proceed_to_caption(callback_query.message.chat.id, links, raw_text, raw_text0)
 
 async def proceed_to_caption(chat_id, links, raw_text, raw_text0):
