@@ -115,6 +115,7 @@ async def proceed_to_caption(chat_id, links, raw_text, raw_text0):
         raw_text3 = ""
 
     await input3.delete(True)
+    await editable.delete()
 
     await proceed_to_thumbnail(chat_id, links, raw_text, raw_text0, raw_text3)
 
