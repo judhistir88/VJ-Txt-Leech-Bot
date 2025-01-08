@@ -53,7 +53,8 @@ async def upload(bot: Client, m: Message):
         content = content.split("\n")
         links = []
         for i in content:
-            links.append(i.split("://", 1))
+            if "://" in i:
+                links.append(i.split(" ", 1))
         os.remove(x)
     except Exception as e:
         await m.reply_text(f"**Invalid file 📁 input. Error: {str(e)}**")
@@ -113,13 +114,11 @@ async def proceed_to_caption(chat_id, links, raw_text, raw_text0):
     if raw_text3.lower() in ["skip"]:
         raw_text3 = ""
 
-    highlighter = f"⁠ "
-    MR = highlighter if raw_text3 == 'Robin' else raw_text3
     await input3.delete(True)
 
-    await proceed_to_thumbnail(chat_id, links, raw_text, raw_text0, MR)
+    await proceed_to_thumbnail(chat_id, links, raw_text, raw_text0, raw_text3)
 
-async def proceed_to_thumbnail(chat_id, links, raw_text, raw_text0, MR):
+async def proceed_to_thumbnail(chat_id, links, raw_text, raw_text0, raw_text3):
     editable = await bot.send_message(chat_id, "Now send the direct download Thumb url\nTo know about Thumb url hit /start\n Or if you don't want thumbnail 🖼️ Send = `No`")
     input6 = await bot.listen(chat_id)
     raw_text6 = input6.text.strip()
@@ -152,7 +151,7 @@ async def proceed_to_thumbnail(chat_id, links, raw_text, raw_text0, MR):
             cmd = f'yt-dlp -f "{ytf}" "{url}" -o "{name}.mp4"'
 
             try:
-                cc = f'**Vid No:** {str(count).zfill(3)}. **{name1}{MR}.mkv**\n**Batch** ➔ **{raw_text0}**'
+                cc = f'**Vid No:** {str(count).zfill(3)}. **{name1} {raw_text3}.mkv**\n**Batch** ➔ **{raw_text0}**'
                 res_file = await helper.download_video(url, cmd, name)
                 filename = res_file
                 await helper.send_vid(bot, Message(chat_id), cc, filename, thumb, name, None)
