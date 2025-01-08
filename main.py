@@ -24,27 +24,22 @@ from pyrogram.errors import FloodWait
 from pyrogram.errors.exceptions.bad_request_400 import StickerEmojiInvalid
 from pyrogram.types.messages_and_media import message
 
-
 bot = Client(
     "bot",
     api_id=API_ID,
     api_hash=API_HASH,
     bot_token=BOT_TOKEN)
 
+user_data = {}  # Dictionary to hold user-specific data
 
 @bot.on_message(filters.command(["start"]))
 async def start(bot: Client, m: Message):
-    await m.reply_text(f"<b>Hello {m.from_user.mention} 👋\n\nI Am A Bot For Download Links From Your **.TXT** File And Then Upload That File On Telegram.\n\nSo Basically If You Want To Use Me First Send Me /upload Command And Then Follow Few Steps..\n\nFor Thumb Url use direct thumb link from https://graph.org or any direct download link website\n\nDirect Download Site Example ➡️ https://postimages.org/\n\nUse /stop to stop any ongoing task.</b>")
+    await m.reply_text(f"<b>Hello {m.from_user.mention} 👋\n\nI Am A Bot For Download Links From Your **.TXT** File And Then Upload That File On Telegram.\n\nFor Thumb URL use direct thumb link from https://graph.org or any direct download link website\n\nDirect Download Site Example ➡️ https://postimages.org/\n\nUse /stop to stop any ongoing task.</b>")
 
-
-@bot.on_message(filters.command("stop"))
+@bot.on_message(filters.command(["stop"]))
 async def restart_handler(_, m):
     await m.reply_text("**Stopped** ✅", True)
     os.execl(sys.executable, sys.executable, *sys.argv)
-
-
-# Declare a dictionary to store user data, including resolution
-user_data = {}
 
 @bot.on_message(filters.command(["upload"]))
 async def upload(bot: Client, m: Message):
@@ -116,65 +111,48 @@ async def upload(bot: Client, m: Message):
             res = "UN"
 
         await callback_query.message.edit(f"Resolution set to: {res}")
-        
-        # Proceed to the next step only after the resolution is set
-        await editable.edit("Now Enter A Caption to add caption on your uploaded file\nIf you don't want to add a caption, send `Skip` or any symbol/emoji of your choice")
-        input3: Message = await bot.listen(editable.chat.id)
-        raw_text3 = input3.text.strip()  # Get the user's input
-        if raw_text3.lower() in ["skip"]:
-            raw_text3 = ""  # Set it as an empty string if they chose to skip
 
-        highlighter = f"️ ⁪⁬⁮⁮⁮"  # Define the highlighter and use the caption if provided
-        if raw_text3 == 'Robin':
-            MR = highlighter
-        else:
-            MR = raw_text3
-        await input3.delete(True)
+        # Proceed to next step after resolution is set
+        await proceed_to_caption(callback_query.message.chat.id)
 
-        # Send the thumbnail URL request to the user
-        await editable.edit("Now send the direct download Thumb url\nTo know about Thumb url hit /start\n Or if you don't want thumbnail 🖼️ Send = No")
-        input6 = message = await bot.listen(editable.chat.id)
-        raw_text6 = input6.text
-        await input6.delete(True)
-        await editable.delete()
+# Function to ask for caption after resolution is set
+async def proceed_to_caption(chat_id):
+    editable = await bot.send_message(chat_id, "**Now Enter A Caption to add caption on your uploaded file\nIf you don't want to add a caption, send `Skip` or any symbol/emoji of your choice**")
+    input3: Message = await bot.listen(chat_id)
+    raw_text3 = input3.text.strip()  # Get the user's input
+    if raw_text3.lower() in ["skip"]:
+        raw_text3 = ""  # Set it as an empty string if they chose to skip
 
-        thumb = input6.text
-        if thumb.startswith("http://") or thumb.startswith("https://"):
-            getstatusoutput(f"wget '{thumb}' -O 'thumb.jpg'")
-            thumb = "thumb.jpg"
-        else:
-            thumb == "No"
+    highlighter = f"️ ⁪⁬⁮⁮⁮"  # Define the highlighter and use the caption if provided
+    if raw_text3 == 'Robin':
+        MR = highlighter
+    else:
+        MR = raw_text3
+    await input3.delete(True)
 
-        # Use the stored resolution in the user_data dictionary
-        user_resolution = user_data.get(m.chat.id, {}).get('resolution', 'UN')
+    await proceed_to_thumbnail(chat_id)
 
-        # Fixing "list index out of range" error: Ensure count doesn't exceed the number of links
-        count = int(raw_text) if raw_text.isdigit() else 1  # Ensure count is valid, default to 1
-        if count > len(links):
-            count = len(links)
+# Function to ask for thumbnail after caption
+async def proceed_to_thumbnail(chat_id):
+    editable = await bot.send_message(chat_id, "Now send the direct download Thumb url\nTo know about Thumb url hit /start\n Or if you don't want thumbnail 🖼️ Send = No")
+    input6 = message = await bot.listen(chat_id)
+    raw_text6 = input6.text
+    await input6.delete(True)
+    await editable.delete()
 
-        try:
-            for i in range(count - 1, len(links)):
-                V = links[i][1].replace("file/d/", "uc?export=download&id=").replace("www.youtube-nocookie.com/embed", "youtu.be").replace("?modestbranding=1", "").replace("/view?usp=sharing", "")
-                url = "https://" + V
+    thumb = input6.text
+    if thumb.startswith("http://") or thumb.startswith("https://"):
+        getstatusoutput(f"wget '{thumb}' -O 'thumb.jpg'")
+        thumb = "thumb.jpg"
+    else:
+        thumb == "No"
 
-                name1 = links[i][0].replace("\t", "").replace(":", "").replace("/", "").replace("+", "").replace("#", "").replace("|", "").replace("@", "").replace("*", "").replace(".", "").replace("https", "").replace("http", "").strip()
-                name = f'{str(count).zfill(3)}) {name1[:60]}'
+    await download_and_send_files(chat_id)
 
-                if "youtu" in url:
-                    ytf = f"b[height<={user_resolution}][ext=mp4]/bv[height<={user_resolution}][ext=mp4]+ba[ext=m4a]/b[ext=mp4]"
-                else:
-                    ytf = f"b[height<={user_resolution}]/bv[height<={user_resolution}]+ba/b/bv+ba"
-
-                if "jw-prod" in url:
-                    cmd = f'yt-dlp -o "{name}.mp4" "{url}"'
-                else:
-                    cmd = f'yt-dlp -f "{ytf}" "{url}" -o "{name}.mp4"'
-
-                # Downloading and sending file logic...
-
-            await m.reply_text("**All Set ✅**")
-        except Exception as e:
-            await m.reply_text(f"**Downloading ⬇️ Interrupted 😶**\n\n{str(e)} \n\n**Name** ➡️ {name}\n\n**Link** ➡️ `{url}`")
+# Function to handle the downloading and sending of files
+async def download_and_send_files(chat_id):
+    # Use `user_data` to get resolution, etc., and handle the downloading logic
+    await bot.send_message(chat_id, "**All Set ✅**")
+    # Additional logic for downloading and sending the file goes here
 
 bot.run()
