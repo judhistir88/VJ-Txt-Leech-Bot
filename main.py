@@ -17,7 +17,7 @@ from subprocess import getstatusoutput
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import FloodWait
-from pyrogram.errors.exceptions.bad_request_400 import StickerEmojiInvalid
+from pyrogram.errors.exceptions.bad_request_400 import StickerEmojiInvalid, MessageNotModified
 from pyrogram.types.messages_and_media import message
 from pyrogram.errors.exceptions.bad_request_400 import MessageIdInvalid
 
@@ -55,14 +55,14 @@ async def upload(bot: Client, m: Message):
         for i in content:
             links.append(i.split("://", 1))
         os.remove(x)
-    except:
-        await m.reply_text("**Invalid file 📁 input.**")
+    except Exception as e:
+        await m.reply_text(f"**Invalid file 📁 input. Error: {str(e)}**")
         os.remove(x)
         return
 
     await editable.edit(f"**Total Links Found 🔗🔗** **{len(links)}**\n\n**Send from where you want to download. Initial is** **1**")
     input0: Message = await bot.listen(editable.chat.id)
-    raw_text = input0.text
+    raw_text = input0.text.strip()
     await input0.delete(True)
 
     await editable.edit("**Now Please Send Me Your Batch Name\nIf you don't want to add, send `Skip` or any symbol/emoji of your choice**")
@@ -101,12 +101,12 @@ async def upload(bot: Client, m: Message):
 
         try:
             await callback_query.message.edit(f"Resolution set to: {res}")
-            await proceed_to_caption(callback_query.message.chat.id)
+            await proceed_to_caption(callback_query.message.chat.id, links, raw_text, raw_text0)
         except MessageIdInvalid:
             await callback_query.message.reply(f"Resolution set to: {res}")
-            await proceed_to_caption(callback_query.message.chat.id)
+            await proceed_to_caption(callback_query.message.chat.id, links, raw_text, raw_text0)
 
-async def proceed_to_caption(chat_id):
+async def proceed_to_caption(chat_id, links, raw_text, raw_text0):
     editable = await bot.send_message(chat_id, "**Now Enter A Caption to add caption on your uploaded file\nIf you don't want to add a caption, send `Skip` or any symbol/emoji of your choice**")
     input3: Message = await bot.listen(chat_id)
     raw_text3 = input3.text.strip()
@@ -117,12 +117,12 @@ async def proceed_to_caption(chat_id):
     MR = highlighter if raw_text3 == 'Robin' else raw_text3
     await input3.delete(True)
 
-    await proceed_to_thumbnail(chat_id)
+    await proceed_to_thumbnail(chat_id, links, raw_text, raw_text0, MR)
 
-async def proceed_to_thumbnail(chat_id):
+async def proceed_to_thumbnail(chat_id, links, raw_text, raw_text0, MR):
     editable = await bot.send_message(chat_id, "Now send the direct download Thumb url\nTo know about Thumb url hit /start\n Or if you don't want thumbnail 🖼️ Send = `No`")
     input6 = await bot.listen(chat_id)
-    raw_text6 = input6.text
+    raw_text6 = input6.text.strip()
     await input6.delete(True)
     await editable.delete()
 
@@ -133,8 +133,8 @@ async def proceed_to_thumbnail(chat_id):
     else:
         thumb = "No"
 
-    count = int(raw_text) if len(links) > 1 else 1
     try:
+        count = int(raw_text) if raw_text.isdigit() else 1
         for i in range(count - 1, len(links)):
             V = links[i][1].replace("file/d/", "uc?export=download&id=").replace("www.youtube-nocookie.com/embed", "youtu.be").replace("?modestbranding=1", "").replace("/view?usp=sharing", "")
             url = "https://" + V
@@ -148,20 +148,20 @@ async def proceed_to_thumbnail(chat_id):
             name1 = links[i][0].replace("\t", "").replace(":", "").replace("/", "").strip()
             name = f'{str(count).zfill(3)}) {name1[:60]}'
 
-            ytf = f"b[height<={user_data[m.chat.id]['resolution']}]/bv+ba"
+            ytf = f"b[height<={user_data[chat_id]['resolution']}]/bv+ba"
             cmd = f'yt-dlp -f "{ytf}" "{url}" -o "{name}.mp4"'
 
             try:
                 cc = f'**Vid No:** {str(count).zfill(3)}. **{name1}{MR}.mkv**\n**Batch** ➔ **{raw_text0}**'
                 res_file = await helper.download_video(url, cmd, name)
                 filename = res_file
-                await helper.send_vid(bot, m, cc, filename, thumb, name, None)
+                await helper.send_vid(bot, Message(chat_id), cc, filename, thumb, name, None)
                 count += 1
                 time.sleep(1)
             except Exception as e:
-                await m.reply_text(str(e))
+                await bot.send_message(chat_id, f"Error processing video: {str(e)}")
                 continue
     except Exception as e:
-        await m.reply_text(str(e))
+        await bot.send_message(chat_id, f"Critical Error: {str(e)}")
 
 bot.run()
