@@ -2,8 +2,8 @@
 
     <center>
         <div class="header">
-            <h1>All Set 👍✅!</h1>
-            <p class="subheading">Made with 💕 in India</p>
+            <h1></h1>
+            <p class="subheading"></p>
         </div>
         <div class="copilot-hero">
             <canvas id="copilot-canvas"></canvas>
