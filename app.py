@@ -9,8 +9,8 @@ def home():
     <center>
     <div class="container">
         <div class="text-container">
-            <h1><span class="highlight">bold</span><br>typo<br>graphy<span class="dot">.</span></h1>
-            <p class="hashtag">#new<span class="trend">trends</span></p>
+            <h1><span class="highlight">All</span><br>Set<br>✅<span class="dot">.</span></h1>
+            <p class="hashtag">made with love <span class="trend">💌</span> in india</p>
         </div>
     </div>
     </center>
@@ -45,13 +45,13 @@ def home():
         }
 
         .highlight {
-            color: #ff9600;
+            color: #00bfff; /* Changed circle color to blue */
             position: relative;
             z-index: 1;
         }
 
         .dot {
-            color: #ff9600;
+            color: #00bfff; /* Match circle color */
         }
 
         .hashtag {
@@ -62,15 +62,15 @@ def home():
         }
 
         .trend {
-            color: #ff9600;
+            color: #00bfff; /* Match circle color */
         }
 
-        /* Orange Circle */
+        /* Blue Circle */
         .circle {
             position: absolute;
             width: 50%;
             height: 50%;
-            background: #ff9600;
+            background: #00bfff; /* Changed circle color */
             border-radius: 50%;
             top: 10%;
             left: -10%;
