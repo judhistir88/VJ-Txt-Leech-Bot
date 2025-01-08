@@ -23,6 +23,7 @@ from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import FloodWait
 from pyrogram.errors.exceptions.bad_request_400 import StickerEmojiInvalid
 from pyrogram.types.messages_and_media import message
+from pyrogram.errors.exceptions.bad_request_400 import MessageIdInvalid
 
 bot = Client(
     "bot",
@@ -110,10 +111,16 @@ async def upload(bot: Client, m: Message):
         except Exception:
             res = "UN"
 
-        await callback_query.message.edit(f"Resolution set to: {res}")
+        try:
+            # Try to edit the message safely, ensure it exists
+            await callback_query.message.edit(f"Resolution set to: {res}")
+            # Proceed to next step after resolution is set
+            await proceed_to_caption(callback_query.message.chat.id)
 
-        # Proceed to next step after resolution is set
-        await proceed_to_caption(callback_query.message.chat.id)
+        except MessageIdInvalid:
+            # If message editing fails (e.g., due to message deletion), send a new message
+            await callback_query.message.reply(f"Resolution set to: {res}")
+            await proceed_to_caption(callback_query.message.chat.id)
 
 # Function to ask for caption after resolution is set
 async def proceed_to_caption(chat_id):
