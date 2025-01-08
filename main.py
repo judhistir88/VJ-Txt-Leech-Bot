@@ -18,7 +18,6 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import FloodWait
 from pyrogram.errors.exceptions.bad_request_400 import StickerEmojiInvalid, MessageNotModified
-from pyrogram.types.messages_and_media import message
 from pyrogram.errors.exceptions.bad_request_400 import MessageIdInvalid
 
 bot = Client(
@@ -43,7 +42,7 @@ async def upload(bot: Client, m: Message):
     editable = await m.reply_text('Send me the "Text File 📁" ⚡️')
     input: Message = await bot.listen(editable.chat.id)
     x = await input.download()
-    await input.delete(True)
+    await input.delete()
 
     path = f"./downloads/{m.chat.id}"
 
@@ -64,14 +63,14 @@ async def upload(bot: Client, m: Message):
     await editable.edit(f"**Total Links Found 🔗🔗** **{len(links)}**\n\n**Send from where you want to download. Initial is** **1**")
     input0: Message = await bot.listen(editable.chat.id)
     raw_text = input0.text.strip()
-    await input0.delete(True)
+    await input0.delete()
 
     await editable.edit("**Now Please Send Me Your Batch Name\nIf you don't want to add, send `Skip` or any symbol/emoji of your choice**")
     input1: Message = await bot.listen(editable.chat.id)
     raw_text0 = input1.text.strip()
     if raw_text0.lower() in ["skip"]:
         raw_text0 = ""
-    await input1.delete(True)
+    await input1.delete()
 
     await editable.edit("**Send Resolution 📸**\n\nPlease choose quality:", reply_markup=InlineKeyboardMarkup([
         [InlineKeyboardButton("144p", callback_data="144")],
@@ -118,7 +117,7 @@ async def proceed_to_caption(chat_id, links, raw_text, raw_text0):
     if raw_text3.lower() in ["skip"]:
         raw_text3 = ""
 
-    await input3.delete(True)
+    await input3.delete()
     await editable.delete()
 
     await proceed_to_thumbnail(chat_id, links, raw_text, raw_text0, raw_text3)
@@ -127,7 +126,7 @@ async def proceed_to_thumbnail(chat_id, links, raw_text, raw_text0, raw_text3):
     editable = await bot.send_message(chat_id, "Now send the direct download Thumb url\nTo know about Thumb url hit /start\n Or if you don't want thumbnail 🖼️ Send = `No`")
     input6 = await bot.listen(chat_id)
     raw_text6 = input6.text.strip()
-    await input6.delete(True)
+    await input6.delete()
     await editable.delete()
 
     thumb = raw_text6
@@ -159,7 +158,7 @@ async def proceed_to_thumbnail(chat_id, links, raw_text, raw_text0, raw_text3):
                 cc = f'**Vid No:** {str(count).zfill(3)}. **{name1} {raw_text3}.mkv**\n**Batch** ➔ **{raw_text0}**'
                 res_file = await helper.download_video(url, cmd, name)
                 filename = res_file
-                await helper.send_vid(bot, Message(chat_id), cc, filename, thumb, name, None)
+                await helper.send_vid(bot, chat_id, cc, filename, thumb, name, None)
                 count += 1
                 time.sleep(1)
             except Exception as e:
