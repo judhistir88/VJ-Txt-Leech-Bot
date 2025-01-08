@@ -43,7 +43,8 @@ async def restart_handler(_, m):
     os.execl(sys.executable, sys.executable, *sys.argv)
 
 
-# Previous part of the code...
+# Declare a dictionary to store user data, including resolution
+user_data = {}
 
 @bot.on_message(filters.command(["upload"]))
 async def upload(bot: Client, m: Message):
@@ -74,15 +75,10 @@ async def upload(bot: Client, m: Message):
 
     # Prompt the user to send their batch name, with the option to skip
     await editable.edit("**Now Please Send Me Your Batch Name\nIf you don't want to add, send `Skip` or any symbol/emoji of your choice**")
-
-    # Listen for the batch name input, but add some timeout handling
-    input1: Message = await bot.listen(editable.chat.id, timeout=30)  # Adding timeout to avoid indefinite waiting
-    if input1:
-        raw_text0 = input1.text.strip()
-        if raw_text0.lower() in ["skip"]:
-            raw_text0 = ""  # Set it as an empty string if they chose to skip
-    else:
-        raw_text0 = ""  # If timeout occurs, set as empty string
+    input1: Message = await bot.listen(editable.chat.id)
+    raw_text0 = input1.text.strip()
+    if raw_text0.lower() in ["skip"]:
+        raw_text0 = ""  # Set it as an empty string if they chose to skip
     await input1.delete(True)
 
     # Inline buttons for resolution selection
@@ -97,9 +93,10 @@ async def upload(bot: Client, m: Message):
 
     @bot.on_callback_query()
     async def resolution_callback(client, callback_query):
-        raw_text2 = callback_query.data
-        await callback_query.answer()
+        raw_text2 = callback_query.data  # Set the resolution from callback data
+        user_data[m.chat.id] = {'resolution': raw_text2}  # Store resolution data in user_data dict
 
+        await callback_query.answer()
         try:
             if raw_text2 == "144":
                 res = "256x144"
@@ -119,23 +116,38 @@ async def upload(bot: Client, m: Message):
             res = "UN"
 
         await callback_query.message.edit(f"Resolution set to: {res}")
+        
+    # Now that the resolution is stored, you can continue with the batch name and caption part
+    # Prompt the user to enter a caption (optional)
+    await editable.edit("Now Enter A Caption to add caption on your uploaded file\nIf you don't want to add a caption, send `Skip` or any symbol/emoji of your choice")
+    input3: Message = await bot.listen(editable.chat.id)
+    raw_text3 = input3.text.strip()  # Get the user's input
+    if raw_text3.lower() in ["skip"]:
+        raw_text3 = ""  # Set it as an empty string if they chose to skip
 
-    # Send the thumbnail URL request to the user after resolution selection
+    highlighter = f"️ ⁪⁬⁮⁮⁮"  # Define the highlighter and use the caption if provided
+    if raw_text3 == 'Robin':
+        MR = highlighter
+    else:
+        MR = raw_text3
+    await input3.delete(True)
+
+    # Send the thumbnail URL request to the user
     await editable.edit("Now send the direct download Thumb url\nTo know about Thumb url hit /start\n Or if you don't want thumbnail 🖼️ Send = No")
     input6 = message = await bot.listen(editable.chat.id)
     raw_text6 = input6.text
     await input6.delete(True)
+    await editable.delete()
 
-    thumb = raw_text6
+    thumb = input6.text
     if thumb.startswith("http://") or thumb.startswith("https://"):
         getstatusoutput(f"wget '{thumb}' -O 'thumb.jpg'")
         thumb = "thumb.jpg"
     else:
         thumb == "No"
-
-    await editable.delete()
-
-    # Continue with the download logic...
+    
+    # Use the stored resolution in the user_data dictionary
+    user_resolution = user_data.get(m.chat.id, {}).get('resolution', 'UN')
 
     if len(links) == 1:
         count = 1
@@ -151,9 +163,9 @@ async def upload(bot: Client, m: Message):
             name = f'{str(count).zfill(3)}) {name1[:60]}'
 
             if "youtu" in url:
-                ytf = f"b[height<={raw_text2}][ext=mp4]/bv[height<={raw_text2}][ext=mp4]+ba[ext=m4a]/b[ext=mp4]"
+                ytf = f"b[height<={user_resolution}][ext=mp4]/bv[height<={user_resolution}][ext=mp4]+ba[ext=m4a]/b[ext=mp4]"
             else:
-                ytf = f"b[height<={raw_text2}]/bv[height<={raw_text2}]+ba/b/bv+ba"
+                ytf = f"b[height<={user_resolution}]/bv[height<={user_resolution}]+ba/b/bv+ba"
 
             if "jw-prod" in url:
                 cmd = f'yt-dlp -o "{name}.mp4" "{url}"'
