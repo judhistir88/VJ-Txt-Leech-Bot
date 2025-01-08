@@ -148,12 +148,8 @@ async def upload(bot: Client, m: Message):
         # Use the stored resolution in the user_data dictionary
         user_resolution = user_data.get(m.chat.id, {}).get('resolution', 'UN')
 
-        if len(links) == 1:
-            count = 1
-        else:
-            count = int(raw_text)
-
         # Fixing "list index out of range" error: Ensure count doesn't exceed the number of links
+        count = int(raw_text) if raw_text.isdigit() else 1  # Ensure count is valid, default to 1
         if count > len(links):
             count = len(links)
 
