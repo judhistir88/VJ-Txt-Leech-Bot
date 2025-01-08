@@ -8,13 +8,12 @@ def home():
     return """
     <center>
     <div class="header">
-        <h1>Bot Is Running</h1>
-        <p class="subheading">All Set 👍✅</p>
+        <h1>Text 2 Leech</h1>
     </div>
     <div class="art-container">
         <div class="hero-content">
-            <h2>✅✅✅✅✅🟨🟧🟧🟧🟧</h2>
-            <p>Explore unique animations and designs.</p>
+            <h2>All Set 👍✅!
+        🟥🟥🟥🟧🟧🟧🟨🟨🟨</h2>
         </div>
     </div>
     </center>
@@ -44,14 +43,6 @@ def home():
             animation: slideIn 2s ease-out;
         }
 
-        .subheading {
-            font-size: 1.5em;
-            margin-top: 10px;
-            font-style: italic;
-            color: #ffeb3b;
-            animation: fadeInUp 2s ease-out;
-        }
-
         .art-container {
             position: relative;
             width: 100%;
@@ -72,13 +63,9 @@ def home():
         }
 
         .hero-content h2 {
-            font-size: 2.5em;
+            font-size: 3em; /* Increased font size */
+            font-weight: bold; /* Made font bold */
             margin: 0;
-        }
-
-        .hero-content p {
-            font-size: 1.2em;
-            margin-top: 10px;
         }
 
         /* Double Exposure Effect */
