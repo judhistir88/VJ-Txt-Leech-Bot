@@ -154,6 +154,10 @@ async def upload(bot: Client, m: Message):
     else:
         count = int(raw_text)
 
+    # Fixing "list index out of range" error: Ensure count doesn't exceed the number of links
+    if count > len(links):
+        count = len(links)
+
     try:
         for i in range(count - 1, len(links)):
             V = links[i][1].replace("file/d/", "uc?export=download&id=").replace("www.youtube-nocookie.com/embed", "youtu.be").replace("?modestbranding=1", "").replace("/view?usp=sharing", "")
