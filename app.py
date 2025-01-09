@@ -13,147 +13,161 @@ def home():
             <p class="hashtag">made with love <span class="trend">💌</span> in india</p>
         </div>
     </div>
-    </center>
-    <style>
-        body {
-            background-color: #000;
-            margin: 0;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: white;
-            font-family: 'Arial', sans-serif;
+</center>
+
+<style>
+    body {
+        background-color: #000;
+        margin: 0;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: white;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+        position: relative;
+        text-align: left;
+    }
+
+    .text-container {
+        position: relative;
+        z-index: 10;
+    }
+
+    h1 {
+        font-size: 12vw; /* Increased size of "All" */
+        line-height: 1;
+        font-weight: bold;
+        color: white;
+        margin: 0;
+        text-transform: uppercase;
+    }
+
+    .highlight {
+        color: #00bfff;
+        position: relative;
+        z-index: 1;
+    }
+
+    .dot {
+        color: #00bfff;
+    }
+
+    .hashtag {
+        font-size: 2vw;
+        margin-top: 20px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .trend {
+        color: #00bfff;
+    }
+
+    /* Bubbles Background */
+    .bubbles {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        top: 0;
+        left: 0;
+        z-index: 0;
+    }
+
+    .bubble {
+        position: absolute;
+        bottom: -100px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        animation: float 10s infinite ease-in-out;
+    }
+
+    .bubble:nth-child(1) {
+        left: 10%;
+        width: 40px;
+        height: 40px;
+        background: rgba(0, 191, 255, 0.4); /* Light Blue */
+        animation-duration: 12s;
+        animation-delay: 0s;
+    }
+
+    .bubble:nth-child(2) {
+        left: 30%;
+        width: 25px;
+        height: 25px;
+        background: rgba(255, 105, 180, 0.5); /* Hot Pink */
+        animation-duration: 8s;
+        animation-delay: 2s;
+    }
+
+    .bubble:nth-child(3) {
+        left: 50%;
+        width: 30px;
+        height: 30px;
+        background: rgba(255, 165, 0, 0.6); /* Orange */
+        animation-duration: 10s;
+        animation-delay: 4s;
+    }
+
+    .bubble:nth-child(4) {
+        left: 70%;
+        width: 20px;
+        height: 20px;
+        background: rgba(34, 193, 195, 0.5); /* Turquoise */
+        animation-duration: 14s;
+        animation-delay: 6s;
+    }
+
+    .bubble:nth-child(5) {
+        left: 90%;
+        width: 35px;
+        height: 35px;
+        background: rgba(253, 253, 150, 0.4); /* Yellow */
+        animation-duration: 16s;
+        animation-delay: 8s;
+    }
+
+    @keyframes float {
+        0% {
+            transform: translateY(0) scale(1);
+            opacity: 1;
         }
-
-        .container {
-            position: relative;
-            text-align: left;
+        50% {
+            transform: translateY(-50vh) scale(1.2);
+            opacity: 0.7;
         }
-
-        .text-container {
-            position: relative;
-            z-index: 10;
+        100% {
+            transform: translateY(-100vh) scale(1.5);
+            opacity: 0;
         }
+    }
+</style>
 
-        h1 {
-            font-size: 8vw;
-            line-height: 1;
-            font-weight: bold;
-            color: white;
-            margin: 0;
-            text-transform: uppercase;
-        }
+<div class="bubbles">
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+</div>
 
-        .highlight {
-            color: #00bfff;
-            position: relative;
-            z-index: 1;
-        }
+<script>
+    // Randomize blur and opacity for each bubble
+    const bubbles = document.querySelectorAll('.bubble');
 
-        .dot {
-            color: #00bfff;
-        }
+    bubbles.forEach(bubble => {
+        // Random blur between 2px to 10px
+        const blurValue = Math.random() * (10 - 2) + 2; 
+        // Random opacity between 0.3 to 0.7
+        const opacityValue = Math.random() * (0.7 - 0.3) + 0.3; 
 
-        .hashtag {
-            font-size: 2vw;
-            margin-top: 20px;
-            font-weight: bold;
-            color: white;
-        }
-
-        .trend {
-            color: #00bfff;
-        }
-
-        /* Bubbles Background */
-        .bubbles {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            top: 0;
-            left: 0;
-            z-index: 0;
-        }
-
-        .bubble {
-            position: absolute;
-            bottom: -100px;
-            width: 20px;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            animation: float 10s infinite ease-in-out;
-        }
-
-        .bubble:nth-child(1) {
-            left: 10%;
-            width: 40px;
-            height: 40px;
-            animation-duration: 12s;
-            animation-delay: 0s;
-        }
-
-        .bubble:nth-child(2) {
-            left: 30%;
-            width: 25px;
-            height: 25px;
-            animation-duration: 8s;
-            animation-delay: 2s;
-        }
-
-        .bubble:nth-child(3) {
-            left: 50%;
-            width: 30px;
-            height: 30px;
-            animation-duration: 10s;
-            animation-delay: 4s;
-        }
-
-        .bubble:nth-child(4) {
-            left: 70%;
-            width: 20px;
-            height: 20px;
-            animation-duration: 14s;
-            animation-delay: 6s;
-        }
-
-        .bubble:nth-child(5) {
-            left: 90%;
-            width: 35px;
-            height: 35px;
-            animation-duration: 16s;
-            animation-delay: 8s;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: translateY(-50vh) scale(1.2);
-                opacity: 0.7;
-            }
-            100% {
-                transform: translateY(-100vh) scale(1.5);
-                opacity: 0;
-            }
-        }
-    </style>
-
-    <div class="bubbles">
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-    </div>
-    """
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
-
+        bubble.style.filter = `blur(${blurValue}px)`; 
+        bubble.style.opacity = opacityValue; 
+    });
+</script>
