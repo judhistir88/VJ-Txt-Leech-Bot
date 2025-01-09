@@ -171,3 +171,7 @@ def home():
         bubble.style.opacity = opacityValue; 
     });
 </script>
+"""
+
+if __name__ == "__main__":
+    app.run()
