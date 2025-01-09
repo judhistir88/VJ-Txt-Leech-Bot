@@ -10,6 +10,7 @@ import time
 import asyncio
 import requests
 import subprocess
+import logging
 
 import core as helper
 from utils import progress_bar
@@ -25,6 +26,9 @@ from pyrogram.errors.exceptions.bad_request_400 import StickerEmojiInvalid
 from pyrogram.types.messages_and_media import message
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
+# Logging setup
+logging.basicConfig(filename='bot_log.txt', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger()
 
 bot = Client(
     "bot",
@@ -32,22 +36,24 @@ bot = Client(
     api_hash=API_HASH,
     bot_token=BOT_TOKEN)
 
+# State management to store user progress
+user_data = {}
 
 @bot.on_message(filters.command(["start"]))
 async def start(bot: Client, m: Message):
+    logging.info(f"User {m.from_user.mention} started the bot.")
     await m.reply_text(f"<b>Hello {m.from_user.mention} 👋\n\n I Am A Bot For Download Links From Your **.TXT** File And Then Upload That File On Telegram So Basically If You Want To Use Me First Send Me /upload Command And Then Follow Few Steps..\n\nUse /stop to stop any ongoing task.</b>")
-
 
 @bot.on_message(filters.command("stop"))
 async def restart_handler(_, m):
+    logging.info(f"User {m.from_user.mention} requested to stop the bot.")
     await m.reply_text("**Stopped**🚦", True)
     os.execl(sys.executable, sys.executable, *sys.argv)
 
-
-
 @bot.on_message(filters.command(["upload"]))
 async def upload(bot: Client, m: Message):
-    editable = await m.reply_text('𝕤ᴇɴᴅ ᴛxᴛ ғɪʟᴇ ⚡️')
+    logging.info(f"User {m.from_user.mention} started the upload process.")
+    editable = await m.reply_text('Send a .txt file ⚡️')
     input: Message = await bot.listen(editable.chat.id)
     x = await input.download()
     await input.delete(True)
@@ -62,77 +68,89 @@ async def upload(bot: Client, m: Message):
        for i in content:
            links.append(i.split("://", 1))
        os.remove(x)
-            # print(len(links)
-    except:
+       logging.info(f"Found {len(links)} links in the uploaded file.")
+    except Exception as e:
            await m.reply_text("**Invalid file input.**")
            os.remove(x)
+           logging.error(f"Error reading file: {e}")
            return
-    
-   
-    await editable.edit(f"**𝕋ᴏᴛᴀʟ ʟɪɴᴋ𝕤 ғᴏᴜɴᴅ ᴀʀᴇ🔗🔗** **{len(links)}**\n\n**𝕊ᴇɴᴅ 𝔽ʀᴏᴍ ᴡʜᴇʀᴇ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ɪɴɪᴛɪᴀʟ ɪ𝕤** **1**")
+
+    user_data[m.chat.id] = {
+        "links": links,
+        "count": 1,
+        "batch_name": "",
+        "resolution": "720",
+        "caption": "",
+        "thumbnail": None
+    }
+
+    await editable.edit(f"**Total links found: {len(links)}**\n\nSend the starting index (default is 1)")
     input0: Message = await bot.listen(editable.chat.id)
-    raw_text = input0.text
+    user_data[m.chat.id]["count"] = int(input0.text) if input0.text else 1
     await input0.delete(True)
 
-    await editable.edit("**Now Please Send Me Your Batch Name**")
-    input1: Message = await bot.listen(editable.chat.id)
-    raw_text0 = input1.text
-    await input1.delete(True)
-    
+    await editable.edit("**Now Please Send Me Your Batch Name**", 
+                        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Skip", callback_data="skip_batch")]]))
 
-    await editable.edit("**𝔼ɴᴛᴇʀ ʀᴇ𝕤ᴏʟᴜᴛɪᴏɴ📸**\n144,240,360,480,720,1080 please choose quality")
-    input2: Message = await bot.listen(editable.chat.id)
-    raw_text2 = input2.text
-    await input2.delete(True)
-    try:
-        if raw_text2 == "144":
-            res = "256x144"
-        elif raw_text2 == "240":
-            res = "426x240"
-        elif raw_text2 == "360":
-            res = "640x360"
-        elif raw_text2 == "480":
-            res = "854x480"
-        elif raw_text2 == "720":
-            res = "1280x720"
-        elif raw_text2 == "1080":
-            res = "1920x1080" 
-        else: 
-            res = "UN"
-    except Exception:
-            res = "UN"
-    
-    
+@bot.on_callback_query()
+async def handle_callback_query(cq, _):
+    chat_id = cq.message.chat.id
+    data = cq.data
+    if data == "skip_batch":
+        user_data[chat_id]["batch_name"] = ""
+    elif data == "skip_caption":
+        user_data[chat_id]["caption"] = ""
+    elif data == "no_thumb":
+        user_data[chat_id]["thumbnail"] = "no"
+    elif data in ["144", "240", "360", "480", "720", "1080"]:
+        user_data[chat_id]["resolution"] = data
+    await cq.answer()
 
-    await editable.edit("Now Enter A Caption to add caption on your uploaded file")
-    input3: Message = await bot.listen(editable.chat.id)
-    raw_text3 = input3.text
-    await input3.delete(True)
-    highlighter  = f"️ ⁪⁬⁮⁮⁮"
-    if raw_text3 == 'Robin':
-        MR = highlighter 
-    else:
-        MR = raw_text3
-   
-    await editable.edit("Now send the Thumb url/nEg » https://graph.org/file/ce1723991756e48c35aa1.jpg \n Or if don't want thumbnail send = no")
-    input6 = message = await bot.listen(editable.chat.id)
-    raw_text6 = input6.text
-    await input6.delete(True)
-    await editable.delete()
+    # Update message with the selected option
+    if data in ["144", "240", "360", "480", "720", "1080"]:
+        await cq.message.edit(f"Resolution set to {data}")
+    elif data == "skip_batch":
+        await cq.message.edit("Batch name skipped")
+    elif data == "skip_caption":
+        await cq.message.edit("Caption skipped")
+    elif data == "no_thumb":
+        await cq.message.edit("Thumbnail skipped")
 
-    thumb = input6.text
-    if thumb.startswith("http://") or thumb.startswith("https://"):
-        getstatusoutput(f"wget '{thumb}' -O 'thumb.jpg'")
-        thumb = "thumb.jpg"
-    else:
-        thumb == "no"
+@bot.on_message(filters.text & ~filters.command())
+async def handle_text_input(bot: Client, m: Message):
+    chat_id = m.chat.id
+    if chat_id not in user_data:
+        return
 
-    if len(links) == 1:
-        count = 1
-    else:
-        count = int(raw_text)
+    user_state = user_data[chat_id]
 
-    try:
+    if user_state["batch_name"] == "":
+        user_state["batch_name"] = m.text
+        await m.reply_text("Batch name set!")
+    elif user_state["caption"] == "":
+        user_state["caption"] = m.text
+        await m.reply_text("Caption set!")
+    elif user_state["thumbnail"] is None:
+        if m.text.lower() == "no":
+            user_state["thumbnail"] = "no"
+            await m.reply_text("Thumbnail skipped.")
+        else:
+            user_state["thumbnail"] = m.text
+            await m.reply_text("Thumbnail URL set!")
+
+    await m.delete()
+
+    if user_state["batch_name"] and user_state["caption"] and user_state["thumbnail"]:
+        await m.reply_text("All inputs received, processing links...")
+
+        # Now proceed with the rest of the logic to process links
+        links = user_state["links"]
+        count = user_state["count"]
+        resolution = user_state["resolution"]
+        batch_name = user_state["batch_name"]
+        caption = user_state["caption"]
+        thumbnail = user_state["thumbnail"]
+
         for i in range(count - 1, len(links)):
 
             V = links[i][1].replace("file/d/","uc?export=download&id=").replace("www.youtube-nocookie.com/embed", "youtu.be").replace("?modestbranding=1", "").replace("/view?usp=sharing","") # .replace("mpd","m3u8")
